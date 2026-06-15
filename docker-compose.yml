@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+
+  db-mantenimiento:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ms_mantenimiento_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata_mantenimiento:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ms-mantenimiento:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8004"
+    volumes:
+      - .:/app
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db-mantenimiento
+      DB_PORT: 5432
+    depends_on:
+      db-mantenimiento:
+        condition: service_healthy
+
+volumes:
+  pgdata_mantenimiento:
