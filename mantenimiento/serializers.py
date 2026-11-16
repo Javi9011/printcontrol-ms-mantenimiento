@@ -30,7 +30,12 @@ class OrdenTrabajoListSerializer(serializers.ModelSerializer):
     tipo_display = serializers.CharField(source='get_tipo_display', read_only=True)
     estado_display = serializers.CharField(source='get_estado_display', read_only=True)
     prioridad_display = serializers.CharField(source='get_prioridad_display', read_only=True)
-    tecnico_nombre = serializers.CharField(source='tecnico.nombre', read_only=True)
+    tecnico_nombre = serializers.SerializerMethodField()
+
+    def get_tecnico_nombre(self, obj):
+        return obj.tecnico_nombre_manual or (
+            obj.tecnico.nombre if obj.tecnico else ''
+        )
     duracion_minutos = serializers.ReadOnlyField()
     piezas = PiezaReemplazadaSerializer(many=True, read_only=True)
 
@@ -43,7 +48,7 @@ class OrdenTrabajoListSerializer(serializers.ModelSerializer):
             'prioridad', 'prioridad_display',
             'equipo_id', 'equipo_nombre', 'equipo_serial',
             'cliente_id', 'cliente_nombre', 'ubicacion',
-            'tecnico', 'tecnico_nombre',
+            'tecnico', 'tecnico_nombre', 'tecnico_nombre_manual',
             'descripcion', 'diagnostico', 'solucion_aplicada',
             'fecha_programada', 'fecha_inicio', 'fecha_fin',
             'contador_al_servicio', 'duracion_minutos',
@@ -62,7 +67,7 @@ class OrdenTrabajoWriteSerializer(serializers.ModelSerializer):
             'numero_orden', 'tipo', 'estado', 'prioridad',
             'equipo_id', 'equipo_nombre', 'equipo_serial',
             'cliente_id', 'cliente_nombre', 'ubicacion',
-            'tecnico', 'descripcion', 'diagnostico', 'solucion_aplicada',
+            'tecnico', 'tecnico_nombre_manual','descripcion', 'diagnostico', 'solucion_aplicada',
             'fecha_programada', 'fecha_inicio', 'fecha_fin',
             'contador_al_servicio', 'costo', 'piezas',
             'notas_internas', 'creado_por',

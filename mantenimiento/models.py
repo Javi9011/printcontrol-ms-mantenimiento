@@ -80,6 +80,12 @@ class OrdenTrabajo(models.Model):
         null=True, blank=True,
         related_name='ordenes'
     )
+    # Tecnico asignado manualmente
+    tecnico_nombre_manual = models.CharField(
+        max_length=150,
+        blank=True,
+        help_text='Nombre del técnico cuando se asigna manualmente'
+    )
 
     # Descripción del problema o trabajo a realizar
     descripcion = models.TextField(help_text='Descripción del problema o trabajo a realizar')
