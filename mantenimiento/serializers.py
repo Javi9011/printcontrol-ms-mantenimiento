@@ -72,6 +72,9 @@ class OrdenTrabajoWriteSerializer(serializers.ModelSerializer):
             'contador_al_servicio', 'costo', 'piezas',
             'notas_internas', 'creado_por',
         ]
+        extra_kwargs = {
+            'numero_orden': {'required': False}
+        }
 
     def create(self, validated_data):
         piezas_data = validated_data.pop('piezas', [])
